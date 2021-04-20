@@ -1,0 +1,203 @@
+---
+title: "Investigating the Relationship Between Ticket Prices & Seats Sold for The Lion King & Hamilton"
+author: Reem Alasadi
+thanks: "Code and data are available at: github.com/alasadir/broadway"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+abstract: "A linear regression model is used to analyze the relationship between ticket prices and seats sold. Results show that ..."
+output:
+  bookdown::pdf_document2
+toc: FALSE
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(lubridate)
+library(kableExtra)
+
+grosses <- read_csv(here::here("inputs/data/grosses.csv"),
+                     guess_max = 40000)
+
+hamilton_and_lion_king <- 
+  grosses %>% 
+  filter(show %in% c("Hamilton", "The Lion King"))
+
+```
+
+\newpage
+
+# Introduction
+
+I am a modest musical fan. I know a good number of musicals thanks to Disney and my theater-fanatic friend from high school, Hadeel. My 2 favorite theatrical musicals are The Lion King and Hamilton. While browsing Alex Cookson’s blog [@alex], his take on the most successful Broadway show of all time grabbed my attention. He analyzes box office returns to determine the highest grossing show. I will build on Alex’s work and will try to determine whether the average ticket price should remain as-is, or can go up as the top ticket price. I will run a linear regression model to see how ticket prices correlate with the number of seats sold during performances. Linear regression should quantify the strength of the relationship between the ticket price and the seats sold.
+
+
+# Data
+
+The dataset includes information about many Broadway shows from the very first week they started showing until the latest performance on March 8, 2020 (all shows were stopped around that time because of COVID-19 pandemic). The dataset includes information like the number of weeks the show has been running, the overall gross, the theater the show was performed at, the number of seats sold, average and top ticket prices, etc. The information has been scraped off of Playbill website, which uses data from The Broadway League's official website. The Broadway League is the official entity that oversees all theatrical shows on Broadway.
+
+The data will be analyzed using `R` [@citeR], a statistical programming language, and packages that allow easier data manipulation: `tidyverse` [@tidy], `lubridate` [@lubr], `knitr` [@knitr]. Data will be visualized using the `ggplot2` [@gg] package.
+
+The original dataset contains 47,524 observations and 14 variables. Since my focus will be on The Lion King and Hamilton shows only, the dataset has been filtered and now has 1,407 observations and 14 variables. Here's a preview of how it looks like:
+
+
+```{r previewofdataset, results='asis', echo=FALSE, message=FALSE, warning=FALSE}
+head(hamilton_and_lion_king, 1) %>%
+  knitr::kable(caption = "", digits = 2) %>%
+  kableExtra::kable_styling(full_width = FALSE)
+```
+
+\newpage
+
+Below is a list of the variable labels:
+
+```{r preview, echo=FALSE}
+colnames(hamilton_and_lion_king)
+```
+
+
+The Lion King is considered one of the longest and most successful Broadway shows in history [insert citation here]. It has been running since July 1997 (over 20 years) and grossed over \$2 billion USD. Hamilton, on the other hand, first debuted in October 2015, but has gained more popularity than The Lion King. In fact, in the 6 years of running, Hamilton grossed over $500 million USD. That is 25% of what The Lion King made in X years. One might think that Hamilton made more money due to performing more times a week to compensate for the 18 year difference, but figure \@ref(fig:performances) exhibits that both shows have consistently maintained 8 performances per week since their first debut:
+
+```{r performances, fig.cap="Performances per week", echo = FALSE}
+hamilton_and_lion_king %>% 
+  mutate(performances = as.integer(performances)) %>% 
+  ggplot(aes(x = week_ending, y = performances)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Number of Performances") +
+  xlab("") +
+  theme_minimal()
+```
+
+\newpage
+
+Another assumption could be that Hamilton performed at a bigger theater and therefore sold more seats. However, figure \@ref(fig:aveticketsvsseatssold) shows that that is not the case. Hamilton has consistently sold 10,000 seats at per week at average ticket price and The Lion King sold between 13 - 15 thousand seats.
+
+```{r aveticketsvsseatssold, fig.cap="Seats sold per week vursus average ticket prices", echo = FALSE}
+hamilton_and_lion_king %>% 
+  ggplot(aes(x = avg_ticket_price, y = seats_sold)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Seats Sold per Week") +
+  xlab("Average Ticket Price (USD)") +
+  theme_minimal()
+
+```
+
+\newpage
+
+So the number of seats sold for Hamilton is less than The Lion King’s, but what about the theater’s capacity?
+
+```{r aveticketsvspctcapacity, fig.cap="Percentage of theater capacity sold vursus average ticket price", echo = FALSE}
+hamilton_and_lion_king %>% 
+  ggplot(aes(x = avg_ticket_price, y = pct_capacity*100)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Theatre Capacity (%)") +
+  xlab("Average Ticket Price (USD)") +
+  theme_minimal()
+```
+
+
+Figure \@ref(fig:aveticketsvspctcapacity) shows that when the average ticket price for The Lion King was between about \$50 - \$200 dollars, the theater was at 100% capacity, meaning it sold out. The demand for Hamilton was stronger; average tickets sold out when they ranged between \$150 - $350 dollars. Some shows even had over 100% capacity. These are instances of standing room tickets.
+
+\newpage
+
+Time to explore the ticket prices.
+
+
+```{r aveticketprice, echo= FALSE, message=FALSE, fig.cap="Average ticket prices each week"}
+hamilton_and_lion_king %>% 
+  ggplot(aes(x = week_ending, y = avg_ticket_price)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Average Ticket Price (USD)") +
+  xlab("") +
+  theme_minimal()
+```
+
+
+It is evident in figure \@ref(fig:aveticketprice) that Hamilton tickets are way more expensive than The Lion King’s. Hamilton may have started close to the lowest ticket price of The Lion King in 2015, but the average ticket price for Hamilton doubled within the first year and exceeded The Lion King's within the second year. While the average ticket price for The Lion King could reach up to a maximum of \$200 USD, Hamilton’s _started_ at $250 USD. 
+
+\newpage
+
+Similarly, the top ticket price for Hamilton start at the maximum of The Lion King's tickets. It is almost double the price. Figure \@ref(fig:topticketprice) shows a summary of the top ticket prices:
+
+```{r topticketprice, echo=FALSE, fig.cap="Top ticket prices per week", message=FALSE, warning=FALSE}
+hamilton_and_lion_king %>% 
+  ggplot(aes(x = week_ending, y = top_ticket_price)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Top Ticket Price (USD)") +
+  xlab("") +
+  theme_minimal()
+```
+
+\newpage
+
+To put things into perspective, figure \@ref(fig:aveticketsvstopticketpricebyyears) compares top ticket price verses average ticket price for both shows over the years. The Lion King's ticket prices had incremental increases in the last 5 years. However Hamilton's ticket prices grew exponentially over the first 2 years, and gradually for the remaining years.
+
+```{r aveticketsvstopticketpricebyyears, fig.cap="Top ticket prices vursus average ticket prices per year", echo = FALSE}
+hamilton_and_lion_king %>% 
+  mutate(year_of_show = lubridate::year(week_ending)) %>%
+  filter(year_of_show %in% c("2015", "2016", "2017", "2018", "2019", "2020")) %>%
+  ggplot(aes(x = avg_ticket_price, y = top_ticket_price)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Top Ticket Price (USD)") +
+  xlab("Average Ticket Price (USD)") +
+  theme_minimal() +
+  facet_wrap(vars(year_of_show))
+
+```
+
+\newpage
+
+# Model
+
+# Results
+
+# Discussion
+
+## First discussion point
+
+## Second discussion point
+
+## Third discussion point
+
+## Weaknesses and next steps
+
+
+\newpage
+
+\appendix
+
+# Appendix {-}
+
+```{r aveticketsvstopticketprice, echo=FALSE, fig.cap="Top ticket prices vursus average ticket prices", message=FALSE, warning=FALSE}
+hamilton_and_lion_king %>% 
+  ggplot(aes(x = avg_ticket_price, y = top_ticket_price)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Top Ticket Price (USD)") +
+  xlab("Average Ticket Price (USD)") +
+  theme_minimal()
+```
+
+
+```{r aveticketsvstopticketpricebyyear, echo=FALSE, fig.cap="Top ticket prices vursus average ticket prices per year", message=FALSE, warning=FALSE}
+hamilton_and_lion_king %>% 
+  mutate(year_of_show = lubridate::year(week_ending)) %>% 
+  ggplot(aes(x = avg_ticket_price, y = top_ticket_price)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Top Ticket Price (USD)") +
+  xlab("Average Ticket Price (USD)") +
+  theme_minimal() +
+  facet_wrap(vars(year_of_show))
+```
+
+\newpage
+
+# Additional details
+
+
+\newpage
+
+
+# References
+
+
