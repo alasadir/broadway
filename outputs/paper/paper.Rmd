@@ -1,7 +1,7 @@
 ---
 title: "Investigating the Relationship Between Ticket Prices & Seats Sold for The Lion King & Hamilton"
 author: Reem Alasadi
-thanks: "Code and data are available at: github.com/alasadir/broadway"
+thanks: "Code and data are available at: https://github.com/alasadir/broadway"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 abstract: "A linear regression model is used to analyze the relationship between ticket prices and seats sold. Results show that ..."
 output:
@@ -16,6 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(lubridate)
 library(kableExtra)
+library(broom)
+library(performance)
 
 grosses <- read_csv(here::here("inputs/data/grosses.csv"),
                      guess_max = 40000)
@@ -42,10 +44,10 @@ The data will be analyzed using `R` [@citeR], a statistical programming language
 The original dataset contains 47,524 observations and 14 variables. Since my focus will be on The Lion King and Hamilton shows only, the dataset has been filtered and now has 1,407 observations and 14 variables. Here's a preview of how it looks like:
 
 
-```{r previewofdataset, results='asis', echo=FALSE, message=FALSE, warning=FALSE}
+```{r previewofdataset, fig.height=8, fig.width=1, results='asis', echo=FALSE, message=FALSE, warning=FALSE}
 head(hamilton_and_lion_king, 1) %>%
   knitr::kable(caption = "", digits = 2) %>%
-  kableExtra::kable_styling(full_width = FALSE)
+  kableExtra::kable_styling(full_width = FALSE, latex_options = "scale_down")
 ```
 
 \newpage
@@ -149,6 +151,96 @@ hamilton_and_lion_king %>%
 \newpage
 
 # Model
+
+## Calculating Correlation between Variables Using Pearson's Method
+
+```{r, echo=FALSE}
+cor(hamilton_and_lion_king$seats_sold, hamilton_and_lion_king$avg_ticket_price, method = "pearson")
+```
+
+```{r, echo=FALSE}
+cor(hamilton_and_lion_king$seats_sold, hamilton_and_lion_king$top_ticket_price, method = "pearson")
+```
+
+```{r}
+cor(hamilton_and_lion_king$top_ticket_price, hamilton_and_lion_king$avg_ticket_price, method = "pearson")
+```
+
+
+## Linear Regressoin Model 
+
+### attempt 1
+
+```{r seatingVsAverageTicketPrice, echo=FALSE}
+seatingVsAverageTicket <- lm(hamilton_and_lion_king$seats_sold ~ hamilton_and_lion_king$avg_ticket_price, data = hamilton_and_lion_king)
+
+summary(seatingVsAverageTicket)
+```
+
+```{r coefficient estimates, echo=FALSE}
+broom::tidy(seatingVsAverageTicket)
+```
+
+```{r diagnostics, echo=FALSE}
+broom::glance(seatingVsAverageTicket)
+```
+
+```{r residuals, echo=FALSE}
+broom::augment(seatingVsAverageTicket)
+```
+
+```{r plotting residuals, echo=FALSE}
+ggplot(seatingVsAverageTicket, 
+       aes(x = .resid)) + 
+  geom_histogram(binwidth = 1) +
+  theme_classic() +
+  labs(y = "Number of occurrences",
+       x = "Residuals")
+```
+
+```{r modelPerformanceDiagnostics, echo=FALSE}
+performance::check_model(seatingVsAverageTicket)
+
+#the model didn't work because not all columns were numeric? Error said: Non-numeric argument to mathematical function
+```
+
+### attempt 2
+
+```{r}
+
+```
+
+
+## Multiple Linear Regression
+
+### attempt 1
+
+```{r multipleLm, echo=FALSE}
+seating_lm <- lm(formula = hamilton_and_lion_king$seats_sold ~ hamilton_and_lion_king$avg_ticket_price +
+                hamilton_and_lion_king$top_ticket_price, 
+                 data = hamilton_and_lion_king)
+summary(seating_lm)
+```
+
+### attempt 2
+
+```{r}
+hamilton_model <- lm(formula = hamilton_and_lion_king$show  == "Hamilton" ~ hamilton_and_lion_king$avg_ticket_price +
+                hamilton_and_lion_king$top_ticket_price +
+                  hamilton_and_lion_king$seats_sold, 
+                 data = hamilton_and_lion_king)
+summary(hamilton_model)
+```
+
+
+```{r}
+lion_king_model <- lm(formula = hamilton_and_lion_king$show == "The Lion King" ~ hamilton_and_lion_king$avg_ticket_price +
+                hamilton_and_lion_king$top_ticket_price +
+                  hamilton_and_lion_king$seats_sold, 
+                 data = hamilton_and_lion_king)
+summary(lion_king_model)
+```
+
 
 # Results
 
