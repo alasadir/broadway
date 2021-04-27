@@ -1,0 +1,851 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Investigating the Relationship Between Ticket Prices \& Seats Sold for The Lion King \& Hamilton},
+  pdfauthor={Reem Alasadi},
+  pdfkeywords={one, two, three},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{hhline}
+\usepackage{calc}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{hyperref}
+
+\title{Investigating the Relationship Between Ticket Prices \& Seats Sold for The Lion King \& Hamilton\thanks{Code and data are available at: \url{https://github.com/alasadir/broadway}}}
+\author{Reem Alasadi}
+\date{27 April 2021}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+A linear regression model is used to analyze the relationship between ticket prices and seats sold. Results show that \ldots{} The abstract answers: 1) what was done, 2) what was found, and 3) why this matters (all at a high level).If your abstract is longer than four sentences then you need to think a lot about whether it is too long. It may be fine (there are always exceptions) but you should probably have a good reason.Your abstract must tell the reader your top-level finding. What is the one thing that we learn about the world because of your paper?
+\end{abstract}
+
+\newpage
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+I am a modest musical fan. I know a good number of musicals thanks to Disney and my theater-fanatic friend from high school, Hadeel. My 2 favorite theatrical musicals are The Lion King and Hamilton. While browsing Alex Cookson's blog (Cookson, n.d.), his take on the most successful Broadway show of all time grabbed my attention. He analyzes box office returns to determine the highest grossing show. Which got me wondering why are ticket prices set the way they are? How is the number of seats sold per show be affected by ticket prices? I build on Alex's work by creating a multiple regression model to try to understand how ticket prices and seats sold for The Lion King and Hamilton are correlated. The linear regression model should quantify the strength of the relationship between the ticket price and the seats sold. This can help, for example, determine whether the average ticket price should remain as-is, or go up as the top ticket price.
+
+What i found, and why it is important?
+
+The \protect\hyperlink{Mux5cux26D}{Method and Data} section will give information about the dataset and some exploratory analysis. The \protect\hyperlink{model}{Model} section will cover how the multiple linear regression was conducted, and the \protect\hyperlink{results}{Results} section will report the results of the model. The \protect\hyperlink{discusssion}{Discussion} section will discuss the implications of the results, and the limitations of the model.
+
+\hypertarget{ethical-considerations}{%
+\section{Ethical Considerations}\label{ethical-considerations}}
+
+While I believe that what was done with The Lion King franchise is phenomenal, I feel responsible to give a nod to Osamu Tezuka's anime series `Kimba the White Lion' (1965) and the `Jungle Emperor' (1950) manga, whose work influenced The Lion King, despite the controversy. There is plenty of information about the controversy online, but I think Pete Keely wrote an encompassing summary on the issue on \href{https://www.hollywoodreporter.com/heat-vision/lion-king-kimba-white-lion-does-disney-need-come-clean-1225822}{\emph{The Hollywood Reporter}} (Keeley 2020).
+
+\hypertarget{method-and-data-md}{%
+\section{Method and Data: \{\#M\&D\}}\label{method-and-data-md}}
+
+\hypertarget{method}{%
+\subsection{Method:}\label{method}}
+
+The data will be analyzed using \texttt{R} (R Core Team 2020), a statistical programming language, and packages that allow easier data manipulation: \texttt{tidyverse} (Wickham et al. 2019), \texttt{lubridate} (Grolemund and Wickham 2011), \texttt{knitr} (Xie 2021). Data will be visualized using the \texttt{ggplot2} (Wickham 2016) package.
+
+The multiple linear regression model will compare the correlation between top\_ticket, avg\_ticket and seats\_sold variables for The Lion King and Hamilton. Top ticket and average ticket prices will alternate as a dependent variable in the model.
+
+\hypertarget{dataset-description}{%
+\subsection{Dataset description:}\label{dataset-description}}
+
+The dataset includes information about many Broadway shows from the very first week they started showing in theaters on Broadway, New York until the latest performance in March 2020, as all shows were stopped around that time because of the COVID-19 pandemic. The dataset includes information like the number of weeks the show has been running, the overall gross, the theater the show was performed at, the number of seats sold, average and top ticket prices, etc. The information has been scraped off of Playbill website, which uses data from The Broadway League's official website. The Broadway League is the official entity that oversees all theatrical shows on Broadway.
+
+The original dataset contains 47,524 observations and 14 variables. Since my focus will be on The Lion King and Hamilton shows only, the dataset has been filtered and now has 1,407 observations and 14 variables. Here's a preview of how it looks like:
+
+\begin{table}
+
+\caption{\label{tab:previewofdataset}}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{l|r|r|l|l|r|r|r|r|r|r|r|r|r}
+\hline
+week\_ending & week\_number & weekly\_gross\_overall & show & theatre & weekly\_gross & potential\_gross & avg\_ticket\_price & top\_ticket\_price & seats\_sold & seats\_in\_theatre & pct\_capacity & performances & previews\\
+\hline
+1997-10-19 & 20 & 10541144 & The Lion King & Minskoff Theatre & 630828 & 696973 & 59.26 & 75 & 10645 & 1745 & 0.87 & 0 & 7\\
+\hline
+\end{tabular}}
+\end{table}
+
+Below is a list of the variable labels:
+
+\begin{verbatim}
+##  [1] "week_ending"          "week_number"          "weekly_gross_overall"
+##  [4] "show"                 "theatre"              "weekly_gross"        
+##  [7] "potential_gross"      "avg_ticket_price"     "top_ticket_price"    
+## [10] "seats_sold"           "seats_in_theatre"     "pct_capacity"        
+## [13] "performances"         "previews"
+\end{verbatim}
+
+Below are summary statistics:
+
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-1}Dataset Summary}
+\centering
+\begin{tabular}[t]{l|l|l|l|l|l|l|l|l|l|l|l|l|l|l}
+\hline
+  &  week\_ending &  week\_number & weekly\_gross\_overall &     show &   theatre &  weekly\_gross & potential\_gross & avg\_ticket\_price & top\_ticket\_price &   seats\_sold & seats\_in\_theatre &  pct\_capacity &  performances &    previews\\
+\hline
+ & Min.   :1997-10-19 & Min.   : 1.00 & Min.   : 2933761 & Length:1407 & Length:1407 & Min.   :      0 & Min.   : 530100 & Min.   :  0.0 & Min.   : 75.0 & Min.   :    0 & Min.   :   0 & Min.   :0.0000 & Min.   :0.000 & Min.   :0.00000\\
+\hline
+ & 1st Qu.:2004-07-14 & 1st Qu.:14.00 & 1st Qu.:14455623 & Class :character & Class :character & 1st Qu.:1076012 & 1st Qu.:1172441 & 1st Qu.: 78.6 & 1st Qu.:100.0 & 1st Qu.:12095 & 1st Qu.:1654 & 1st Qu.:0.9832 & 1st Qu.:8.000 & 1st Qu.:0.00000\\
+\hline
+ & Median :2011-04-17 & Median :27.00 & Median :20614959 & Mode  :character & Mode  :character & Median :1481172 & Median :1512304 & Median :116.4 & Median :225.0 & Median :13418 & Median :1696 & Median :1.0002 & Median :8.000 & Median :0.00000\\
+\hline
+ & Mean   :2010-07-01 & Mean   :26.58 & Mean   :21903718 & NA & NA & Mean   :1651128 & Mean   :1650198 & Mean   :131.5 & Mean   :277.7 & Mean   :12984 & Mean   :1648 & Mean   :0.9836 & Mean   :7.949 & Mean   :0.04193\\
+\hline
+ & 3rd Qu.:2016-10-19 & 3rd Qu.:39.00 & 3rd Qu.:27986767 & NA & NA & 3rd Qu.:2047494 & 3rd Qu.:2062121 & 3rd Qu.:156.4 & 3rd Qu.:250.0 & 3rd Qu.:14196 & 3rd Qu.:1754 & 3rd Qu.:1.0124 & 3rd Qu.:8.000 & 3rd Qu.:0.00000\\
+\hline
+ & Max.   :2020-03-01 & Max.   :53.00 & Max.   :57807272 & NA & NA & Max.   :4041493 & Max.   :3524602 & Max.   :375.4 & Max.   :998.0 & Max.   :16319 & Max.   :1801 & Max.   :1.0346 & Max.   :9.000 & Max.   :8.00000\\
+\hline
+ & NA & NA & NA & NA & NA & NA & NA's   :2 & NA & NA's   :1 & NA & NA & NA & NA & NA\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{variables-used-in-the-model}{%
+\subsection{Variables used in the model:}\label{variables-used-in-the-model}}
+
+The variables that will be analyzed are as follows. Variable descriptions are imported from Alex's repo (Cookson, n.d.):
+
+\begin{longtable}[]{@{}ccc@{}}
+\toprule
+variable & class & description\tabularnewline
+\midrule
+\endhead
+show & character & Name of show, i.e.~The `Lion King' and `Hamilton'\tabularnewline
+avg\_ticket\_price & double & Average price of tickets sold\tabularnewline
+top\_ticket\_price & double & Highest price of tickets sold\tabularnewline
+seats\_sold & double & Total seats sold for all performances and previews\tabularnewline
+\bottomrule
+\end{longtable}
+
+The only change made to a variable is the data-type for `show'; it is changed from `character' to `factor' as it contains binary data. This change is necessary for the model to recognize categorical variables.
+
+\hypertarget{data-exploration}{%
+\subsection{Data Exploration}\label{data-exploration}}
+
+The Lion King is considered one of the longest and most successful Broadway shows in history {[}insert citation here{]}. It has been running since October 1997 (over 20 years) and grossed over \$1.6 billion USD in performances in Broadway alone (not counting performances done on tour). Hamilton, on the other hand, first debuted in October 2015, but has gained much success. In fact, in the 6 years of running, Hamilton grossed over \$600 million USD. That is equivalent to what The Lion King made in about 12 years. Figure @ref{[}fig:grosses{]} exhibits the grosses of both shows over the years:
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/grosses-1.pdf}
+\caption{\label{fig:grosses}Grosses over the years}
+\end{figure}
+
+\newpage
+
+Figure \ref{fig:performances} exhibits that both shows maintained 8 performances per week most of the time:
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/performances-1.pdf}
+\caption{\label{fig:performances}Performances per week}
+\end{figure}
+
+\newpage
+
+As shown in figure \ref{fig:aveticketsvsseatssold}, Hamilton consistently sold 10,000 seats at per week at average ticket price, and The Lion King sold between 13 - 15 thousand seats:
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/aveticketsvsseatssold-1.pdf}
+\caption{\label{fig:aveticketsvsseatssold}Seats sold per week vursus average ticket prices}
+\end{figure}
+
+\newpage
+
+So the number of seats sold for Hamilton is less than The Lion King's, but what about the theater's capacity?
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/aveticketsvspctcapacity-1.pdf}
+\caption{\label{fig:aveticketsvspctcapacity}Percentage of theater capacity sold vursus average ticket price}
+\end{figure}
+
+Figure \ref{fig:aveticketsvspctcapacity} shows that when the average ticket price for The Lion King was between about \$50 - \$200 dollars, the theater was at 100\% capacity, meaning it sold out. The demand for Hamilton was stronger; average tickets sold out when they ranged between \$150 - \$350 dollars. Some shows even had over 100\% capacity. These are instances of standing room tickets.
+
+\newpage
+
+Time to explore the ticket prices.
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/aveticketprice-1.pdf}
+\caption{\label{fig:aveticketprice}Average ticket prices each week}
+\end{figure}
+
+It is evident in figure \ref{fig:aveticketprice} that Hamilton tickets are way more expensive than The Lion King's. Hamilton may have started close to the lowest ticket price of The Lion King in 2015, but the average ticket price for Hamilton doubled within the first year and exceeded The Lion King's within the second year. While the average ticket price for The Lion King could reach up to a maximum of \$200 USD, Hamilton's \emph{started} at \$250 USD.
+
+\newpage
+
+Similarly, the top ticket price for Hamilton start at the maximum of The Lion King's tickets. It is almost double the price. Figure \ref{fig:topticketprice} shows the top ticket price trend:
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/topticketprice-1.pdf}
+\caption{\label{fig:topticketprice}Top ticket prices per week}
+\end{figure}
+
+\newpage
+
+To put things into perspective, figure \ref{fig:aveticketsvstopticketpricebyyears} compares top ticket price verses average ticket price for both shows over the years. The Lion King's ticket prices had incremental increases in the last 5 years. However Hamilton's ticket prices grew exponentially over the first 2 years, and gradually for the remaining years.
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/aveticketsvstopticketpricebyyears-1.pdf}
+\caption{\label{fig:aveticketsvstopticketpricebyyears}Top ticket prices vursus average ticket prices per year}
+\end{figure}
+
+\newpage
+
+\hypertarget{model}{%
+\section{Model}\label{model}}
+
+Linear regression is one of the statistical analysis tools that shows the relationship between two or more variables. It uses data to predict trends. As mentioned earlier, the linear regression model is used to quantify the strength of the relationship between the ticket prices and the seats sold. It can also help forecast future ticket prices.
+
+\hypertarget{alternative-models}{%
+\subsection{Alternative Models}\label{alternative-models}}
+
+An Autoregressive Integrated Moving Average (ARIMA) model could be also used to understand current data and forecast future ticket prices. It relies on historical data to make predictions. I would have loved to have conducted both a multiple linear regression and ARIMA and compared the results, but ARIMA uses time series data and that is beyond my humble expertise in R. I tried.
+
+\hypertarget{model-specifics}{%
+\subsection{Model Specifics}\label{model-specifics}}
+
+Two regression models will be created; one uses top ticket price as the dependent variable, and the other uses the average ticket price. To distinguish between both models, the top ticket price model will be referred to as the top\_model, and the average ticket price model will be referred to as avg\_model.
+
+\textbf{Top\_model specifics:}
+- Dependent variable: Top ticket price
+- Independent variables: Average ticket price, seats sold, show
+- Mathematical notation:
+\[
+Top Ticket Price = m (average ticket price) + m (seats sold) + m (show) + Intercept (b)
+\]
+
+\textbf{Avg\_model specifics:}
+
+\begin{itemize}
+\tightlist
+\item
+  Dependent variable: Average ticket price
+\item
+  Independent variables: Top ticket price, seats sold, show
+\item
+  Mathematical notation:
+  \[
+  Average Ticket Price = m (top ticket price) + m (seats sold) + m (show) + Intercept (b)
+  \]
+\end{itemize}
+
+\hypertarget{hypothesis}{%
+\subsection{Hypothesis}\label{hypothesis}}
+
+\textbf{H0:} There is no statistically significant relationship between ticket prices and seats sold at a show
+
+\textbf{H1:} There is a statistically significant relationship between ticket prices and seats sold at a show
+
+\hypertarget{model-validation}{%
+\subsection{Model Validation}\label{model-validation}}
+
+To validate the model, the data is split into 2 groups: training data (80\%) and test data (20\%) using the \texttt{tidymodels} package. After the mutli regression is conducted on the training data, the model is fitted with test data for prediction. Then the predicted data is compared with the training data to see how accurate the model is using the \texttt{broom} package.
+
+\hypertarget{top-ticket-price-model}{%
+\subsubsection{Top Ticket Price Model}\label{top-ticket-price-model}}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = top_ticket_price ~ avg_ticket_price + seats_sold + 
+##     show, data = hamilton_and_lion_king)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -297.039  -35.596   -5.054   46.790  184.405 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      308.316121  21.641861   14.25   <2e-16 ***
+## avg_ticket_price   1.744556   0.042006   41.53   <2e-16 ***
+## seats_sold        -0.023111   0.001555  -14.86   <2e-16 ***
+## showHamilton     233.817986   8.508910   27.48   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 64.56 on 1402 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.9204, Adjusted R-squared:  0.9202 
+## F-statistic:  5403 on 3 and 1402 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\hypertarget{plotting-top-model}{%
+\paragraph{Plotting Top Model}\label{plotting-top-model}}
+
+\includegraphics{paper_files/figure-latex/plotting top_model-1.pdf}
+
+\hypertarget{top-model-coefficient-estimates}{%
+\paragraph{Top Model Coefficient Estimates}\label{top-model-coefficient-estimates}}
+
+ 
+  \providecommand{\huxb}[2]{\arrayrulecolor[RGB]{#1}\global\arrayrulewidth=#2pt}
+  \providecommand{\huxvb}[2]{\color[RGB]{#1}\vrule width #2pt}
+  \providecommand{\huxtpad}[1]{\rule{0pt}{#1}}
+  \providecommand{\huxbpad}[1]{\rule[-#1]{0pt}{#1}}
+
+\begin{table}[ht]
+\begin{centerbox}
+\begin{threeparttable}
+\captionsetup{justification=centering,singlelinecheck=off}
+\caption{(\#tab:coefficient estimates) }
+ \setlength{\tabcolsep}{0pt}
+\begin{tabular}{l l l l l}
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}-}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0.4}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} \textbf{term} \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} \textbf{estimate} \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} \textbf{std.error} \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} \textbf{statistic} \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0.4}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} \textbf{p.value} \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}-}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0.4}}l!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedright \hspace{6pt} (Intercept) \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 308~~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 21.6~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 14.2 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0.4}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 4.13e-43~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}|>{\huxb{0, 0, 0}{0.4}}|}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0.4}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} avg\_ticket\_price \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 1.74~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.042~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 41.5 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0.4}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 1.82e-246 \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}|>{\huxb{0, 0, 0}{0.4}}|}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0.4}}l!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedright \hspace{6pt} seats\_sold \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -0.0231 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.00155 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -14.9 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0.4}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 1.61e-46~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}|>{\huxb{0, 0, 0}{0.4}}|}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0.4}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} showHamilton \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 234~~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 8.51~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 27.5 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0.4}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 2.41e-133 \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}-}
+\arrayrulecolor{black}
+\end{tabular}
+\end{threeparttable}\par\end{centerbox}
+
+\end{table}
+ 
+
+\begin{table}
+
+\caption{\label{tab:diagnostics}Top Model Diagnostics}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{r|r|r|r|r|r|r|r|r|r|r|r}
+\hline
+r.squared & adj.r.squared & sigma & statistic & p.value & df & logLik & AIC & BIC & deviance & df.residual & nobs\\
+\hline
+0.92 & 0.92 & 64.56 & 5402.53 & 0 & 3 & -7852.67 & 15715.34 & 15741.58 & 5843569 & 1402 & 1406\\
+\hline
+\end{tabular}}
+\end{table}
+
+\hypertarget{plotting-top-model-residuals}{%
+\paragraph{Plotting Top Model Residuals}\label{plotting-top-model-residuals}}
+
+\includegraphics{paper_files/figure-latex/plotting residuals-1.pdf}
+
+\hypertarget{average-ticket-model}{%
+\subsubsection{Average Ticket Model}\label{average-ticket-model}}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = avg_ticket_price ~ top_ticket_price + seats_sold + 
+##     show, data = hamilton_and_lion_king)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -62.275 -19.086  -6.224  19.623 110.074 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      -4.078e+01  9.798e+00  -4.162 3.34e-05 ***
+## top_ticket_price  3.162e-01  7.613e-03  41.531  < 2e-16 ***
+## seats_sold        6.662e-03  6.896e-04   9.661  < 2e-16 ***
+## showHamilton     -1.192e+01  4.482e+00  -2.661  0.00789 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 27.49 on 1402 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.8346, Adjusted R-squared:  0.8342 
+## F-statistic:  2358 on 3 and 1402 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\hypertarget{plotting-average-model}{%
+\paragraph{Plotting Average Model}\label{plotting-average-model}}
+
+\includegraphics{paper_files/figure-latex/plotting avg_model-1.pdf}
+
+\hypertarget{average-model-coefficient-estimates}{%
+\paragraph{Average Model Coefficient Estimates}\label{average-model-coefficient-estimates}}
+
+ 
+  \providecommand{\huxb}[2]{\arrayrulecolor[RGB]{#1}\global\arrayrulewidth=#2pt}
+  \providecommand{\huxvb}[2]{\color[RGB]{#1}\vrule width #2pt}
+  \providecommand{\huxtpad}[1]{\rule{0pt}{#1}}
+  \providecommand{\huxbpad}[1]{\rule[-#1]{0pt}{#1}}
+
+\begin{table}[ht]
+\begin{centerbox}
+\begin{threeparttable}
+\captionsetup{justification=centering,singlelinecheck=off}
+\caption{(\#tab:avg_model coefficient estimates) }
+ \setlength{\tabcolsep}{0pt}
+\begin{tabular}{l l l l l}
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}-}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0.4}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} \textbf{term} \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} \textbf{estimate} \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} \textbf{std.error} \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} \textbf{statistic} \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0.4}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} \textbf{p.value} \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}-}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0.4}}l!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedright \hspace{6pt} (Intercept) \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -40.8~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 9.8~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -4.16 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0.4}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 3.34e-05~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}|>{\huxb{0, 0, 0}{0.4}}|}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0.4}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} top\_ticket\_price \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.316~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.00761 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 41.5~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0.4}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 1.82e-246 \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}|>{\huxb{0, 0, 0}{0.4}}|}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0.4}}l!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedright \hspace{6pt} seats\_sold \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.00666 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.00069 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 9.66 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0.4}}}{\cellcolor[RGB]{242, 242, 242}\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 2.01e-21~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}|>{\huxb{0, 0, 0}{0.4}}|}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0.4}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} showHamilton \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -11.9~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 4.48~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -2.66 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0.4}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.00789~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}-}
+\arrayrulecolor{black}
+\end{tabular}
+\end{threeparttable}\par\end{centerbox}
+
+\end{table}
+ 
+
+\textbackslash begin\{table\}
+
+\textbackslash caption\{(\#tab:avg\_model diagnostics)Avg Model Diagnostics\}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{r|r|r|r|r|r|r|r|r|r|r|r}
+\hline
+r.squared & adj.r.squared & sigma & statistic & p.value & df & logLik & AIC & BIC & deviance & df.residual & nobs\\
+\hline
+0.83 & 0.83 & 27.49 & 2358.19 & 0 & 3 & -6652.02 & 13314.04 & 13340.28 & 1059129 & 1402 & 1406\\
+\hline
+\end{tabular}}
+\textbackslash end\{table\}
+
+\hypertarget{plotting-avg-model-residuals}{%
+\paragraph{Plotting Avg Model Residuals}\label{plotting-avg-model-residuals}}
+
+\includegraphics{paper_files/figure-latex/plotting avg_model residuals-1.pdf}
+
+\newpage
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+ 
+  \providecommand{\huxb}[2]{\arrayrulecolor[RGB]{#1}\global\arrayrulewidth=#2pt}
+  \providecommand{\huxvb}[2]{\color[RGB]{#1}\vrule width #2pt}
+  \providecommand{\huxtpad}[1]{\rule{0pt}{#1}}
+  \providecommand{\huxbpad}[1]{\rule[-#1]{0pt}{#1}}
+
+\begin{table}[ht]
+\begin{centerbox}
+\begin{threeparttable}
+\captionsetup{justification=centering,singlelinecheck=off}
+\caption{(\#tab:display model) }
+ \setlength{\tabcolsep}{0pt}
+\begin{tabular}{l l l}
+
+
+\hhline{>{\huxb{0, 0, 0}{0.8}}->{\huxb{0, 0, 0}{0.8}}->{\huxb{0, 0, 0}{0.8}}-}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}c!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\centering \hspace{6pt}  \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{c!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\centering \hspace{6pt} (1) \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{c!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\centering \hspace{6pt} (2) \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{255, 255, 255}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}-}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} (Intercept) \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 308.316 *** \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -40.780 *** \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt}  \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} (21.642)~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} (9.798)~~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} avg\_ticket\_price \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 1.745 *** \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} ~~~~~~~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt}  \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} (0.042)~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} ~~~~~~~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} seats\_sold \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -0.023 *** \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.007 *** \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt}  \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} (0.002)~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} (0.001)~~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} showHamilton \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 233.818 *** \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -11.925 **~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt}  \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} (8.509)~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} (4.482)~~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} top\_ticket\_price \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} ~~~~~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.316 *** \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt}  \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} ~~~~~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} (0.008)~~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{255, 255, 255}{0.4}}->{\huxb{0, 0, 0}{0.4}}->{\huxb{0, 0, 0}{0.4}}-}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} N \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 1406~~~~~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 1406~~~~~~~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} R2 \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.920~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 0.835~~~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} logLik \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -7852.668~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} -6652.018~~~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+
+\multicolumn{1}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt} AIC \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 15715.337~~~~ \hspace{6pt}\huxbpad{6pt}} &
+\multicolumn{1}{r!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedleft \hspace{6pt} 13314.037~~~~ \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{>{\huxb{0, 0, 0}{0.8}}->{\huxb{0, 0, 0}{0.8}}->{\huxb{0, 0, 0}{0.8}}-}
+\arrayrulecolor{black}
+
+\multicolumn{3}{!{\huxvb{0, 0, 0}{0}}l!{\huxvb{0, 0, 0}{0}}}{\huxtpad{6pt + 1em}\raggedright \hspace{6pt}  *** p $<$ 0.001;  ** p $<$ 0.01;  * p $<$ 0.05. \hspace{6pt}\huxbpad{6pt}} \tabularnewline[-0.5pt]
+
+
+\hhline{}
+\arrayrulecolor{black}
+\end{tabular}
+\end{threeparttable}\par\end{centerbox}
+
+\end{table}
+ 
+
+The R-squared value shows that about 92.04\% of the variation in the top ticket price (dependent variable) can be explained by the top model. Whereas 83.50\% of the variation in the average ticket price can be explained by the avg model.
+
+An intercept of 308.32 means that the top ticket price for The Lion King, when the average ticket price is \$0 and 0 seats are sold, is \$308.32 USD.
+
+The coefficient for average ticket price for The Lion King is 1.74 and is significantly different from 0, suggesting that one dollar increase in average ticket price for The Lion King is associated with \$1.74 dollar increase in top ticket price for The Lion King, while holding other variables constant.
+
+The coefficient for seats sold for The Lion King is -0.02 and is significantly different from 0, suggesting that seats sold for The Lion King on average decreases 0.02 seat for top ticket price, while holding other variables constant.Meaning theater-goers are 2\% less likely to purchase a top ticket.
+
+The coefficient for Hamilton is 233.82 and is significantly different from 0, suggesting that the top ticket price for Hamilton is \$233.82 dollars higher than the top ticket price for The Lion King, while holding other variables constant.
+
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
+
+\begin{itemize}
+\tightlist
+\item
+  Is at least one of the predictors X1,X2,\ldots,Xp useful in predicting the response?
+\item
+  Do all the predictors help to explain Y, or is only a subset of the predictors useful?
+\item
+  How well does the model fit the data?
+\item
+  Given a set of predictor values, what response value should we predict, and how accurate is our prediction?
+\end{itemize}
+
+\hypertarget{hamilton-almost-always-sold-out-despite-their-expensive-tickets}{%
+\subsection{Hamilton almost always sold out despite their expensive tickets}\label{hamilton-almost-always-sold-out-despite-their-expensive-tickets}}
+
+There is no formula for a successful show. Both The Lion King and Hamilton have memorable soundtracks, complex choreographies, diverse cast, and a relatible story.
+
+It could be that Hamilton gained a lot of popularity for bringing a new blood to Broadway specifically, and theater generally. Unlike other musicals, it narrates the story of Alexander Hamilton, an immigrant who rose to the top, through hip-hop and rap. It is rated PG-13, so it still has a big audience reach.
+
+\hypertarget{casuality-or-lack-thereof}{%
+\subsection{Casuality (or lack thereof)}\label{casuality-or-lack-thereof}}
+
+Do you have a causal story, or at least a sub-section in the discussion that talks about causality and why you can't speak to it, or what you would do if you could?
+
+The model does not suggest causality. True data is correlated, but that does not mean that they are created because of another.
+
+\hypertarget{third-discussion-point}{%
+\subsection{Third discussion point}\label{third-discussion-point}}
+
+\hypertarget{weaknesses-and-next-steps}{%
+\subsection{Weaknesses and next steps}\label{weaknesses-and-next-steps}}
+
+weaknesses:
+1) Non-linearity of the response-predictor relationships.
+2) Correlation of error terms.
+3) Non-constant variance of error terms.
+4) Outliers.
+5) High-leverage points.
+6) Collinearity
+
+\newpage
+
+\appendix
+
+\hypertarget{appendix}{%
+\section*{Appendix}\label{appendix}}
+\addcontentsline{toc}{section}{Appendix}
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/aveticketsvstopticketprice-1.pdf}
+\caption{\label{fig:aveticketsvstopticketprice}Top ticket prices vursus average ticket prices}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/aveticketsvstopticketpricebyyear-1.pdf}
+\caption{\label{fig:aveticketsvstopticketpricebyyear}Top ticket prices vursus average ticket prices per year}
+\end{figure}
+
+\newpage
+
+\hypertarget{additional-details}{%
+\section{Additional details}\label{additional-details}}
+
+\newpage
+
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\leavevmode\hypertarget{ref-alex}{}%
+Cookson, Alex. n.d. ``What's the Most Successful Broadway Show of All Time?'' \emph{Alex Cookson}. \url{https://www.alexcookson.com/post/most-successful-broadway-show-of-all-time/}.
+
+\leavevmode\hypertarget{ref-lubr}{}%
+Grolemund, Garrett, and Hadley Wickham. 2011. ``Dates and Times Made Easy with lubridate.'' \emph{Journal of Statistical Software} 40 (3): 1--25. \url{https://www.jstatsoft.org/v40/i03/}.
+
+\leavevmode\hypertarget{ref-keeley_2020}{}%
+Keeley, Pete. 2020. ``Big Little Lions: Disney's New 'Lion King' Dodges the 'Kimba' Similarity Issue.'' \emph{The Hollywood Reporter}. \url{https://www.hollywoodreporter.com/heat-vision/lion-king-kimba-white-lion-does-disney-need-come-clean-1225822}.
+
+\leavevmode\hypertarget{ref-citeR}{}%
+R Core Team. 2020. \emph{R: A Language and Environment for Statistical Computing}. Vienna, Austria: R Foundation for Statistical Computing. \url{https://www.R-project.org/}.
+
+\leavevmode\hypertarget{ref-gg}{}%
+Wickham, Hadley. 2016. \emph{Ggplot2: Elegant Graphics for Data Analysis}. Springer-Verlag New York. \url{https://ggplot2.tidyverse.org}.
+
+\leavevmode\hypertarget{ref-tidy}{}%
+Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D'Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019. ``Welcome to the tidyverse.'' \emph{Journal of Open Source Software} 4 (43): 1686. \url{https://doi.org/10.21105/joss.01686}.
+
+\leavevmode\hypertarget{ref-knitr}{}%
+Xie, Yihui. 2021. ``Knitr: A General-Purpose Package for Dynamic Report Generation in R.'' \url{https://yihui.org/knitr/}.
+
+\end{document}
