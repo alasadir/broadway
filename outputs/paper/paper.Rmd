@@ -1,13 +1,16 @@
 ---
-title: "Investigating the Relationship Between Ticket Prices & Seats Sold for The Lion King & Hamilton"
+title: "Investigating the Relationship Between Ticket Prices & Seats Sold for Broadway’s The Lion King & Hamilton"
 author: Reem Alasadi
 thanks: "Code and data are available at: https://github.com/alasadir/broadway"
 date: "`r format(Sys.time(), '%d %B %Y')`"
-abstract: "A linear regression model is used to analyze the relationship between ticket prices and seats sold. Results show that ... The abstract answers: 1) what was done, 2) what was found, and 3) why this matters (all at a high level).If your abstract is longer than four sentences then you need to think a lot about whether it is too long. It may be fine (there are always exceptions) but you should probably have a good reason.Your abstract must tell the reader your top-level finding. What is the one thing that we learn about the world because of your paper?"
+abstract: "A linear regression model is conducted to analyze the relationship between top and average ticket prices and the number of seats sold for the Broadway shows 'The Lion King' and 'Hamilton'. Results show that these variables are correlated, but do not explain what affects ticket prices. This suggests a need to explore other affecting variables."
 keywords: 
-- one
-- two
-- three
+- broadway
+- the lion king
+- hamilton
+- multiple linear regression
+- ticket prices
+- seats sold
 output:
   bookdown::pdf_document2
 toc: FALSE
@@ -20,13 +23,9 @@ library(tidyverse)
 library(lubridate)
 library(kableExtra)
 library(broom)
-library(performance)
-library(see)
-library(qqplotr)
 library(huxtable)
 library(tidymodels)
-library(forecast)
-library(xts)
+library(rsample)
 
 grosses <- read_csv(here::here("inputs/data/grosses.csv"),
                      guess_max = 40000)
@@ -41,9 +40,11 @@ hamilton_and_lion_king <-
 
 # Introduction
 
-I am a modest musical fan. I know a good number of musicals thanks to Disney and my theater-fanatic friend from high school, Hadeel. My 2 favorite theatrical musicals are The Lion King and Hamilton. While browsing Alex Cookson’s blog [@alex], his take on the most successful Broadway show of all time grabbed my attention. He analyzes box office returns to determine the highest grossing show. Which got me wondering why are ticket prices set the way they are? How is the number of seats sold per show be affected by ticket prices? I build on Alex’s work  by creating a multiple regression model to try to understand how ticket prices and seats sold for The Lion King and Hamilton are correlated. The linear regression model should quantify the strength of the relationship between the ticket price and the seats sold. This can help, for example, determine whether the average ticket price should remain as-is, or go up as the top ticket price.
+I am a modest musical fan. I know a good number of musicals thanks to Disney and my theater-fanatic friend from high school, Hadeel. My 2 favorite theatrical musicals are The Lion King and Hamilton. While browsing Alex Cookson’s blog [@alex], his take on the most successful Broadway show of all time grabbed my attention. He analyzes box office returns to determine the highest-grossing show. Which got me wondering why are ticket prices set the way they are? How are ticket prices affected by seats sold? 
 
-What i found, and why it is important?
+This project builds on Alex’s work by creating a multiple regression model to try to understand how ticket prices and seats sold for The Lion King and Hamilton are correlated. The linear regression model should quantify the strength of the relationship between the ticket price and the seats sold. If a relationship is found, it could help forecast future ticket prices.
+
+Two models are run, one with the top ticket price as the dependent (response) variable, and another with the average ticket price as the dependent variable. It was found that top ticket price, average ticket price and the number of seats sold are correlated. The results, however, do not suggest that these variables can predict or explain ticket prices.
 
 The [Method and Data](#M&D) section will give information about the dataset and some exploratory analysis. The [Model](#model) section will cover how the multiple linear regression was conducted, and the [Results](#results) section will report the results of the model. The [Discussion](#discusssion) section will discuss the implications of the results, and the limitations of the model.
 
@@ -58,15 +59,17 @@ While I believe that what was done with The Lion King franchise is phenomenal, I
 
 ## Method: 
 
-The data will be analyzed using `R` [@citeR], a statistical programming language, and packages that allow easier data manipulation: `tidyverse` [@tidy], `lubridate` [@lubr], `knitr` [@knitr]. Data will be visualized using the `ggplot2` [@gg] package.
+The data will be analyzed using `R` [@citeR], a statistical programming language, and packages that allow easier data manipulation, like: `tidyverse` [@tidy], `lubridate` [@lubr], `knitr` [@knitr], and `rsample`. Tables will be formatted using `KableExtra` [@KablExtra] and `huxtable` [@hux]. Data will be visualized using the `tidymodels` package [@tidy] that includes `ggplot2` package [@gg].
 
-The multiple linear regression model will compare the correlation between top_ticket, avg_ticket and seats_sold variables for The Lion King and Hamilton. Top ticket and average ticket prices will alternate as a dependent variable in the model.
+The multiple linear regression model will compare the correlation between top_ticket, avg_ticket and seats_sold variables for The Lion King and Hamilton. Top ticket and average ticket prices will alternate as dependent (response) variables in the model.
+
+The code for visualizing confidence intervals was taken from `rsample`'s website [@confidenceInt].
 
 ## Dataset description:
 
-The dataset includes information about many Broadway shows from the very first week they started showing in theaters on Broadway, New York until the latest performance in March 2020, as all shows were stopped around that time because of the COVID-19 pandemic. The dataset includes information like the number of weeks the show has been running, the overall gross, the theater the show was performed at, the number of seats sold, average and top ticket prices, etc. The information has been scraped off of Playbill website, which uses data from The Broadway League's official website. The Broadway League is the official entity that oversees all theatrical shows on Broadway.
+The dataset includes information about many Broadway shows from the very first week they started showing in theaters on Broadway, New York until the latest performance in March 2020, as all shows were stopped around that time because of the COVID-19 pandemic. The dataset includes information like the number of weeks the show has been running, the overall gross, the theater the show was performed at, the number of seats sold, average and top ticket prices, etc. The information has been scraped off of the Playbill website, which uses data from The Broadway League's official website. The Broadway League is the official entity that oversees all theatrical shows on Broadway.
 
-The original dataset contains 47,524 observations and 14 variables. Since my focus will be on The Lion King and Hamilton shows only, the dataset has been filtered and now has 1,407 observations and 14 variables. Here's a preview of how it looks like:
+The original dataset contains 47,524 observations and 14 variables. Since the scope of the project will be on The Lion King and Hamilton shows only, the dataset has been filtered and now has 1,407 observations with 3 N/A values and 14 variables. Here's a preview of how it looks like:
 
 ```{r previewofdataset, fig.height=8, fig.width=1, results='asis', echo=FALSE, message=FALSE, warning=FALSE}
 head(hamilton_and_lion_king, 1) %>%
@@ -101,7 +104,7 @@ The variables that will be analyzed are as follows. Variable descriptions are im
 
 | variable | class | description |
 |:-:|:-:|:-:|
-| show | character | Name of show, i.e. The 'Lion King' and 'Hamilton' |
+| show | character | Name of the show, i.e. The 'Lion King' and 'Hamilton' |
 | avg_ticket_price | double | Average price of tickets sold |
 | top_ticket_price | double | Highest price of tickets sold |
 | seats_sold | double | Total seats sold for all performances and previews |
@@ -111,7 +114,7 @@ The only change made to a variable is the data-type for 'show'; it is changed fr
 
 ## Data Exploration
 
-The Lion King is considered one of the longest and most successful Broadway shows in history [insert citation here]. It has been running since October 1997 (over 20 years) and grossed over \$1.6 billion USD in performances in Broadway alone (not counting performances done on tour). Hamilton, on the other hand, first debuted in October 2015, but has gained much success. In fact, in the 6 years of running, Hamilton grossed over $600 million USD. That is equivalent to what The Lion King made in about 12 years. Figure \@ref[fig:grosses] exhibits the grosses of both shows over the years:
+The Lion King is considered to be one of the longest and most successful Broadway shows in history [@lk]. It has been running since October 1997 (over 20 years) and grossed over \$1.6 billion in performances on Broadway alone (not counting performances done on tour). Hamilton, on the other hand, first debuted in October 2015 but has gained much success. In fact, in the 6 years of running, Hamilton grossed over $600 million. That is equivalent to what The Lion King made in about 12 years. Figure \@ref[fig:grosses] exhibits the grosses of both shows over the years:
 
 ```{r grosses, fig.cap="Grosses over the years", echo=FALSE}
 hamilton_and_lion_king %>% 
@@ -138,9 +141,9 @@ hamilton_and_lion_king %>%
 
 \newpage
 
-As shown in figure \@ref(fig:aveticketsvsseatssold), Hamilton consistently sold 10,000 seats at per week at average ticket price, and The Lion King sold between 13 - 15 thousand seats:
+As shown in figure \@ref(fig:aveticketsvsseatssold), Hamilton consistently sold 10,000 seats per week at average ticket price, and The Lion King sold between 13 - 15 thousand seats:
 
-```{r aveticketsvsseatssold, fig.cap="Seats sold per week vursus average ticket prices", echo = FALSE}
+```{r aveticketsvsseatssold, fig.cap="Seats sold per week versus average ticket prices", echo = FALSE}
 hamilton_and_lion_king %>% 
   ggplot(aes(x = avg_ticket_price, y = seats_sold)) +
   geom_point(aes(color = show), alpha = 0.8) +
@@ -154,7 +157,7 @@ hamilton_and_lion_king %>%
 
 So the number of seats sold for Hamilton is less than The Lion King’s, but what about the theater’s capacity?
 
-```{r aveticketsvspctcapacity, fig.cap="Percentage of theater capacity sold vursus average ticket price", echo = FALSE}
+```{r aveticketsvspctcapacity, fig.cap="Percentage of theater capacity sold versus average ticket price", echo = FALSE}
 hamilton_and_lion_king %>% 
   ggplot(aes(x = avg_ticket_price, y = pct_capacity*100)) +
   geom_point(aes(color = show), alpha = 0.8) +
@@ -164,7 +167,7 @@ hamilton_and_lion_king %>%
 ```
 
 
-Figure \@ref(fig:aveticketsvspctcapacity) shows that when the average ticket price for The Lion King was between about \$50 - \$200 dollars, the theater was at 100% capacity, meaning it sold out. The demand for Hamilton was stronger; average tickets sold out when they ranged between \$150 - $350 dollars. Some shows even had over 100% capacity. These are instances of standing room tickets.
+Figure \@ref(fig:aveticketsvspctcapacity) shows that when the average ticket price for The Lion King was between about \$50 - \$200, the theater was at 100% capacity, meaning it sold out. The demand for Hamilton was stronger; average tickets sold out when they ranged between \$150 - \$350. Some shows even had over 100% capacity. These are instances of standing room tickets.
 
 \newpage
 
@@ -181,11 +184,11 @@ hamilton_and_lion_king %>%
 ```
 
 
-It is evident in figure \@ref(fig:aveticketprice) that Hamilton tickets are way more expensive than The Lion King’s. Hamilton may have started close to the lowest ticket price of The Lion King in 2015, but the average ticket price for Hamilton doubled within the first year and exceeded The Lion King's within the second year. While the average ticket price for The Lion King could reach up to a maximum of \$200 USD, Hamilton’s _started_ at $250 USD. 
+It is evident in figure \@ref(fig:aveticketprice) that Hamilton tickets are way more expensive than The Lion King’s. Hamilton may have started close to the lowest ticket price of The Lion King in 2015, but the average ticket price for Hamilton doubled within the first year and exceeded The Lion King's within the second year. While the average ticket price for The Lion King could reach up to a maximum of \$200, Hamilton’s _started_ at \$250. 
 
 \newpage
 
-Similarly, the top ticket price for Hamilton start at the maximum of The Lion King's tickets. It is almost double the price. Figure \@ref(fig:topticketprice) shows the top ticket price trend:
+Similarly, the top ticket price for Hamilton starts at the maximum of The Lion King's tickets. It is almost double the price. Figure \@ref(fig:topticketprice) shows the top ticket price trend:
 
 ```{r topticketprice, echo=FALSE, fig.cap="Top ticket prices per week", message=FALSE, warning=FALSE}
 hamilton_and_lion_king %>% 
@@ -198,9 +201,9 @@ hamilton_and_lion_king %>%
 
 \newpage
 
-To put things into perspective, figure \@ref(fig:aveticketsvstopticketpricebyyears) compares top ticket price verses average ticket price for both shows over the years. The Lion King's ticket prices had incremental increases in the last 5 years. However Hamilton's ticket prices grew exponentially over the first 2 years, and gradually for the remaining years.
+To put things into perspective, figure \@ref(fig:aveticketsvstopticketpricebyyears) compares top ticket price versus average ticket price for both shows over the years. The Lion King's ticket prices had incremental increases in the last 5 years. However, Hamilton's ticket prices grew exponentially over the first 2 years, and gradually for the remaining years.
 
-```{r aveticketsvstopticketpricebyyears, fig.cap="Top ticket prices vursus average ticket prices per year", echo = FALSE}
+```{r aveticketsvstopticketpricebyyears, fig.cap="Top ticket prices versus average ticket prices per year", echo = FALSE}
 hamilton_and_lion_king %>% 
   mutate(year_of_show = lubridate::year(week_ending)) %>%
   filter(year_of_show %in% c("2015", "2016", "2017", "2018", "2019", "2020")) %>%
@@ -221,19 +224,19 @@ Linear regression is one of the statistical analysis tools that shows the relati
 
 ## Alternative Models
 
-An Autoregressive Integrated Moving Average (ARIMA) model could be also used to understand current data and forecast future ticket prices. It relies on historical data to make predictions. I would have loved to have conducted both a multiple linear regression and ARIMA and compared the results, but ARIMA uses time series data and that is beyond my humble expertise in R. I tried.
+An Autoregressive Integrated Moving Average (ARIMA) model could be also used to understand current data and forecast future ticket prices. It relies on historical data to make predictions. I would have loved to have conducted both multiple linear regression and ARIMA and compared the results, but ARIMA uses time-series data and that is beyond my humble expertise in R. I tried.
 
 
 ## Model Specifics
 
-Two regression models will be created; one uses top ticket price as the dependent variable, and the other uses the average ticket price. To distinguish between both models, the top ticket price model will be referred to as the top_model, and the average ticket price model will be referred to as avg_model.
+Two regression models will be created; one uses the top ticket price as the dependent variable, and the other uses the average ticket price. To distinguish between both models, the top ticket price model will be referred to as the top_model, and the average ticket price model will be referred to as avg_model.
 
 **Top_model specifics:**
 - Dependent variable: Top ticket price
 - Independent variables: Average ticket price, seats sold, show
 - Mathematical notation:
 $$
-Top Ticket Price = m (average ticket price) + m (seats sold) + m (show) + Intercept (b)
+Top Ticket Price = Intercept (b) + m (average ticket price) + m (seats sold) + m (show) + residual error
 $$
 
 **Avg_model specifics:**
@@ -242,7 +245,7 @@ $$
 - Independent variables: Top ticket price, seats sold, show
 - Mathematical notation:
 $$
-Average Ticket Price = m (top ticket price) + m (seats sold) + m (show) + Intercept (b)
+Average Ticket Price = Intercept (b) + m (top ticket price) + m (seats sold) + m (show) + residual error
 $$
 
 
@@ -252,9 +255,8 @@ $$
 
 **H1:** There is a statistically significant relationship between ticket prices and seats sold at a show
 
-## Model Validation
 
-To validate the model, the data is split into 2 groups: training data (80%) and test data (20%) using the `tidymodels` package. After the mutli regression is conducted on the training data, the model is fitted with test data for prediction. Then the predicted data is compared with the training data to see how accurate the model is using the `broom` package.
+# Results {#results}
 
 
 ```{r , echo=FALSE, include=FALSE}
@@ -266,19 +268,19 @@ hamilton_and_lion_king %>%
 mutate(show = as_factor(show))
 ```
 
-```{r, echo=FALSE, message=FALSE, include=FALSE}
+```{r echo=FALSE, message=FALSE, include=FALSE}
 #checking the data type for 'show' to make sure changes were made
 
 class(hamilton_and_lion_king$show)
 ```
 
-```{r message=FALSE, include=FALSE}
+```{r echo=FALSE, message=FALSE}
 #checking the order of the shows within the column. This will help determine which show will be taken as a dependent variable in the lm() model
 
 levels(hamilton_and_lion_king$show)
 ```
 
-```{r message=FALSE, include=FALSE}
+```{r model variables, message=FALSE, include=FALSE}
 model_data <- hamilton_and_lion_king %>%
   select(top_ticket_price,
          avg_ticket_price,
@@ -295,7 +297,7 @@ dim(model_data)
 plot(model_data)
 ```
 
-### Top Ticket Price Model
+## Top Ticket Price Model
 
 ```{r model top ticket, echo=FALSE, message=FALSE}
 top_model <- lm(formula = top_ticket_price ~
@@ -305,7 +307,23 @@ top_model <- lm(formula = top_ticket_price ~
              data = hamilton_and_lion_king)
 summary(top_model)
 ```
-#### Plotting Top Model
+
+$$
+Top Ticket Price = 308.31 + 1.7 (average ticket price) - 0.02 (seats sold) + 223.81 (show) + 64.56 
+$$
+
+The results show that there is a statistically significant relationship between the top ticket price and seats sold at a show. Therefore the null hypothesis is rejected.
+
+|  | Value | Interpretation |
+|:-:|:-:|:-:|
+| R-Squared | 92.02% | The R-squared value shows that about 92.02% of the variation in the top ticket price can be explained by the top model. |
+| Intercept | 308.32 | We would expect an average of \$308.32 for the top ticket price for The Lion King, when the average ticket price is \$0 and 0 seats are sold. |
+| Average ticket | 1.74 | While holding the other variables constant, for each \$1 dollar difference in the average ticket price for The Lion King, an average of $1.74 difference is expected for top ticket price |
+| Seats sold | -0.02 | While holding the other variables constant, for each seat sold for The Lion King, the top ticket price is expected to decrease by an average of $0.02. |
+| Hamilton show | 223.82 | Compared to The Lion King, we would expect that the top ticket price for Hamilton to be $233.82 more expensive, while holding other variables constant. |
+
+
+### Plotting Top Model
 
 ```{r plotting top_model, echo=FALSE, message=FALSE, warning=FALSE}
 hamilton_and_lion_king %>%
@@ -318,28 +336,12 @@ hamilton_and_lion_king %>%
   theme_classic()
 ```
 
-#### Top Model Coefficient Estimates
 
-```{r coefficient estimates, echo=FALSE, message=FALSE}
-broom::tidy(top_model)
-```
-
-```{r include=FALSE}
-plot(broom::tidy(top_model))
-```
-
-
-```{r diagnostics, echo=FALSE, message=FALSE}
-broom::glance(top_model) %>%
-   knitr::kable(caption = "Top Model Diagnostics", digits = 2) %>%
-  kableExtra::kable_styling(full_width = FALSE, latex_options = "scale_down")
-```
+### Plotting Top Model Residuals
 
 ```{r residuals, message=FALSE, include=FALSE}
 broom::augment(top_model)
 ```
-
-#### Plotting Top Model Residuals
 
 ```{r plotting residuals, echo=FALSE}
 ggplot(top_model, 
@@ -350,9 +352,45 @@ ggplot(top_model,
        x = "Residuals")
 ```
 
+### Top Model Confidence Intervals [
+
+```{r top model diagnostics, include=FALSE}
+glance(top_model)
+```
+
+```{r top model coefficient estimates, include=FALSE}
+tidy(top_model)
+```
+
+```{r include=FALSE}
+confint(top_model)
+```
+
+```{r top model confidence interval prep, echo=FALSE}
+set.seed(1407)
+
+top_model_intervals <- 
+  reg_intervals(top_ticket_price ~ avg_ticket_price + seats_sold + show, 
+                data = model_data,
+                keep_reps = TRUE,
+                model_fn = "lm")
+top_model_intervals
+```
+
+```{r plotting top model confidence intervals, echo=FALSE}
+top_model_intervals%>% 
+  select(term, .replicates) %>% 
+  unnest(cols = .replicates) %>% 
+  ggplot(aes(x = estimate)) + 
+  geom_histogram(bins = 30) + 
+  facet_wrap(~ term, scales = "free_x") + 
+  geom_vline(data = top_model_intervals, aes(xintercept = .lower), col = "red") + 
+  geom_vline(data = top_model_intervals, aes(xintercept = .upper), col = "red") + 
+  geom_vline(xintercept = 0, col = "green")
+```
 
 
-### Average Ticket Model
+## Average Ticket Price Model
 
 ```{r avg_model, echo=FALSE, message=FALSE}
 avg_model <- lm(formula = avg_ticket_price ~
@@ -364,7 +402,21 @@ summary(avg_model)
 
 ```
 
-#### Plotting Average Model
+$$
+Average Ticket Price = -40.78 +0.32 (top ticket price) + 0.007 (seats sold) -11.92 (show) + 27.49
+$$
+
+The results show that there is a statistically significant relationship between the top ticket price and seats sold at a show. Therefore the null hypothesis is rejected.
+
+|  | Value | Interpretation |
+|:-:|:-:|:-|
+| R-Squared | 83.42% | The R-squared value shows that about 83.42% of the variation in the average ticket price can be explained by the avg model. |
+| Intercept | -40.78 | We would expect an average of \$-40.78 for the average ticket price for The Lion King when the top ticket price is \$0 and 0 seats are sold. |
+| Top ticket | 0.32 | While holding the other variables constant, for each \$1 difference in the top ticket price for The Lion King, an average of $0.32 difference is expected for average ticket price |
+| Seats sold | 0.007 | While holding the other variables constant, for each seat sold for The Lion King, the average ticket price is expected to increase by an average of $0.007. |
+| Hamilton show | -11.92 | Compared to The Lion King, we would expect that the average ticket price for Hamilton is $11.92 cheaper while holding other variables constant. |
+
+### Plotting Average Model
 
 ```{r plotting avg_model, echo=FALSE, message=FALSE, warning=FALSE}
 hamilton_and_lion_king %>%
@@ -377,29 +429,14 @@ hamilton_and_lion_king %>%
   theme_classic()
 ```
 
-#### Average Model Coefficient Estimates
 
-```{r avg_model coefficient estimates, echo=FALSE, message=FALSE}
-broom::tidy(avg_model)
-```
-
-```{r include=FALSE}
-plot(broom::tidy(avg_model))
-```
-
-
-```{r avg_model diagnostics, echo=FALSE, message=FALSE}
-broom::glance(avg_model) %>%
-   knitr::kable(caption = "Avg Model Diagnostics", digits = 2) %>%
-  kableExtra::kable_styling(full_width = FALSE, latex_options = "scale_down")
-```
+### Plotting Avg Model Residuals
 
 
 ```{r avg_model residuals, message=FALSE, include=FALSE}
 broom::augment(avg_model)
 ```
 
-#### Plotting Avg Model Residuals
 
 ```{r plotting avg_model residuals, echo=FALSE}
 ggplot(avg_model, 
@@ -410,55 +447,77 @@ ggplot(avg_model,
        x = "Residuals")
 ```
 
+### Avg Model Confidence Intervals
+
+```{r avg model diagnostics, message=FALSE, include=FALSE}
+broom::glance(avg_model)
+```
+
+```{r avg model coefficient estimates, message=FALSE, include=FALSE}
+broom::tidy(avg_model)
+```
+```{r include=FALSE}
+confint(avg_model)
+```
+
+```{r avg model confidence interval prep, include=FALSE}
+set.seed(1407)
+
+avg_model_intervals <- 
+  reg_intervals(avg_ticket_price ~ top_ticket_price + seats_sold + show, 
+                data = model_data,
+                keep_reps = TRUE,
+                model_fn = "lm")
+avg_model_intervals
+```
+
+
+```{r plotting avg model confidence intervals, echo=FALSE}
+avg_model_intervals%>% 
+  select(term, .replicates) %>% 
+  unnest(cols = .replicates) %>% 
+  ggplot(aes(x = estimate)) + 
+  geom_histogram(bins = 30) + 
+  facet_wrap(~ term, scales = "free_x") + 
+  geom_vline(data = avg_model_intervals, aes(xintercept = .lower), col = "red") + 
+  geom_vline(data = avg_model_intervals, aes(xintercept = .upper), col = "red") + 
+  geom_vline(xintercept = 0, col = "green")
+```
+
+
 \newpage
 
-# Results
+## Summary
 
 ```{r display model, echo=FALSE}
 huxreg(top_model, avg_model)
 ```
 
-The R-squared value shows that about 92.04% of the variation in the top ticket price (dependent variable) can be explained by the top model. Whereas 83.50% of the variation in the average ticket price can be explained by the avg model.
+\newpage
 
-An intercept of 308.32 means that the top ticket price for The Lion King, when the average ticket price is \$0 and 0 seats are sold, is $308.32 USD.
+# Discussion {discussion}
 
-The coefficient for average ticket price for The Lion King is 1.74 and is significantly different from 0, suggesting that one dollar increase in average ticket price for The Lion King is associated with $1.74 dollar increase in top ticket price for The Lion King, while holding other variables constant.
+## “Correlation does not imply causation”
 
-The coefficient for seats sold for The Lion King is -0.02 and is significantly different from 0, suggesting that seats sold for The Lion King on average decreases 0.02 seat for top ticket price, while holding other variables constant.Meaning theater-goers are 2% less likely to purchase a top ticket.
+Although comparing ticket prices between The Lion King and Hamilton quantified the price differences between the shows, this comparison was not useful in *predicting* ticket prices. For example, the model suggests that for each seat sold for The Lion King, the average ticket price is expected to increase by an average of \$0.007. Does that mean that if 2 seats are sold that the average ticket price will increase by \$0.014? Or if a 1,000 seats sold that the average ticket price will increase by $7? No. Although these variables are correlated, it is not a case of causality. 
 
-The coefficient for Hamilton is 233.82 and is significantly different from 0, suggesting that the top ticket price for Hamilton is $233.82 dollars higher than the top ticket price for The Lion King, while holding other variables constant.
-
-# Discussion
-
-- Is at least one of the predictors X1,X2,…,Xp  useful in predicting the response?
-- Do all the predictors help to explain  Y, or is only a subset of the predictors useful?
-- How well does the model fit the data?
-- Given a set of predictor values, what response value should we predict, and how accurate is our prediction?
-
-## Hamilton almost always sold out despite their expensive tickets
-
-There is no formula for a successful show. Both The Lion King and Hamilton have memorable soundtracks, complex choreographies, diverse cast, and a relatible story.
-
-It could be that Hamilton gained a lot of popularity for bringing a new blood to Broadway specifically, and theater generally. Unlike other musicals, it narrates the story of Alexander Hamilton, an immigrant who rose to the top, through hip-hop and rap. It is rated PG-13, so it still has a big audience reach.
+There are other factors that affect ticket prices that this model did not capture. Take the season, for example. Holidays are known to attract more traffic, hence the number of tickets and seats sold is expected to increase.
 
 
-## Casuality (or lack thereof)
+## Weaknesses
 
-Do you have a causal story, or at least a sub-section in the discussion that talks about causality and why you can’t speak to it, or what you would do if you could?
+The avg model's confidence interval for 'show - Hamilton' variable is not significant as a portion of the residuals were equal to zero. This could be caused by outlier data points. This also caused an error in the model's result that the average ticket price for Hamilton is $11.92 dollars cheaper The Lion King's. It should be investigated further to fix that error.
 
-The model does not suggest causality. True data is correlated, but that does not mean that they are created because of another.
 
-## Third discussion point
+## Next Steps
 
-## Weaknesses and next steps
+It would be interesting to conduct a multiple regression model with different dependent variables to see how they correlate with ticket prices and number of seats sold, for example:
 
-weaknesses:
-1) Non-linearity of the response-predictor relationships.
-2) Correlation of error terms.
-3) Non-constant variance of error terms.
-4) Outliers.
-5) High-leverage points.
-6) Collinearity
+- Weekly grosses 
+
+- Awards received, like Tony Awards
+
+It would also be interesting to conduct an ARIMA model to forecast if and when Hamilton's grosses will exceed The Lion King's.
 
 \newpage
 
@@ -486,10 +545,6 @@ hamilton_and_lion_king %>%
   theme_minimal() +
   facet_wrap(vars(year_of_show))
 ```
-
-\newpage
-
-# Additional details
 
 
 \newpage

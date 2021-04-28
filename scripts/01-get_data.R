@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Clean the survey data downloaded from [...UPDATE ME!!!!!]
+# Purpose: Build and run a multiple regression to forecast average and top ticket prices for The Lion King and Hamilton
 # Author: Reem Alasadi
 # Data: 26 April 2021
 # Contact: reem.alasadi@mail.utoronto.ca
@@ -13,16 +13,14 @@ library(tidyverse)
 library(lubridate)
 library(kableExtra)
 library(broom)
-library(performance)
-library(see)
-library(qqplotr)
 library(huxtable)
 library(tidymodels)
-library(rstanarm)
+
 
 # Read in the raw data
 
 #grosses <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-04-28/grosses.csv', guess_max = 40000)
+
 grosses <- read_csv(here::here("inputs/data/grosses.csv"),
                     guess_max = 40000)
 
@@ -37,22 +35,85 @@ hamilton_and_lion_king <-
 # Save dataset
 write_csv(hamilton_and_lion_king, "inputs/data/hamilton_and_lion_king.csv")
 
+#### Data Exploration ####
 
-#### Model ####
+#preview dataset
+head(hamilton_and_lion_king, 1) %>%
+  knitr::kable(caption = "", digits = 2) %>%
+  kableExtra::kable_styling(full_width = FALSE, latex_options = "scale_down")
 
-#Calculating Correlation between Variables Using Pearson's Method
+#show column names
+colnames(hamilton_and_lion_king)
 
-## 1
-cor(hamilton_and_lion_king$seats_sold, hamilton_and_lion_king$avg_ticket_price, method = "pearson")
+#summary statistics
+summary(hamilton_and_lion_king) %>%
+  knitr::kable(caption = "Dataset Summary", digits = 2) %>%
+  kableExtra::kable_styling(full_width = FALSE)
 
-## 2
-cor(hamilton_and_lion_king$seats_sold, hamilton_and_lion_king$top_ticket_price, method = "pearson")
+#view null values
+sum(is.na(hamilton_and_lion_king))
 
-## 3
-cor(hamilton_and_lion_king$top_ticket_price, hamilton_and_lion_king$avg_ticket_price, method = "pearson")
+#plotting grosses over the years
+hamilton_and_lion_king %>% 
+  ggplot(aes(x = week_ending, y = weekly_gross/1000000)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Weekly Gross (in millions)") +
+  xlab("") +
+  theme_minimal()
 
+#plotting performances per week
+hamilton_and_lion_king %>% 
+  mutate(performances = as.integer(performances)) %>% 
+  ggplot(aes(x = week_ending, y = performances)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Number of Performances") +
+  xlab("") +
+  theme_minimal()
 
-#### Multiple Linear Regression ####
+#plotting seats sold per week versus average ticket price
+hamilton_and_lion_king %>% 
+  ggplot(aes(x = avg_ticket_price, y = seats_sold)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Seats Sold per Week") +
+  xlab("Average Ticket Price (USD)") +
+  theme_minimal()
+
+#Percentage of theater capacity sold versus average ticket price
+hamilton_and_lion_king %>% 
+  ggplot(aes(x = avg_ticket_price, y = pct_capacity*100)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Theatre Capacity (%)") +
+  xlab("Average Ticket Price (USD)") +
+  theme_minimal()
+
+#Average ticket prices each week
+hamilton_and_lion_king %>% 
+  ggplot(aes(x = week_ending, y = avg_ticket_price)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Average Ticket Price (USD)") +
+  xlab("") +
+  theme_minimal()
+
+#Top ticket prices per week
+hamilton_and_lion_king %>% 
+  ggplot(aes(x = week_ending, y = top_ticket_price)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Top Ticket Price (USD)") +
+  xlab("") +
+  theme_minimal()
+
+#Top ticket prices versus average ticket prices per year
+hamilton_and_lion_king %>% 
+  mutate(year_of_show = lubridate::year(week_ending)) %>%
+  filter(year_of_show %in% c("2015", "2016", "2017", "2018", "2019", "2020")) %>%
+  ggplot(aes(x = avg_ticket_price, y = top_ticket_price)) +
+  geom_point(aes(color = show), alpha = 0.8) +
+  ylab("Top Ticket Price (USD)") +
+  xlab("Average Ticket Price (USD)") +
+  theme_minimal() +
+  facet_wrap(vars(year_of_show))
+
+#### Model: Multiple Linear Regression ####
 
 #since 'show' column contains binary data, Lion King & Hamilton, it is considered as categorical data and should be converted to a factor
 hamilton_and_lion_king <-
@@ -81,41 +142,17 @@ dim(model_data)
 # Plotting variables
 plot(model_data)
 
-# Splitting data into training and testing sets
-set.seed(2)
+## Top Ticket Price Model ##
 
-ham_lion_split <- rsample::initial_split(model_data, prop = 0.80)
-ham_lion_split
-
-ham_lion_train <- rsample::training(ham_lion_split)
-ham_lion__test  <-  rsample::testing(ham_lion_split)
-
-# modeling the training samples
-top_model <- lm(top_ticket_price ~., data = ham_lion_train)
+#creating multiple regression for top ticket price
+top_model <- lm(formula = top_ticket_price ~
+                  avg_ticket_price +
+                  seats_sold + 
+                  show,  
+                data = hamilton_and_lion_king)
 summary(top_model)
 
-avg_model <- lm(avg_ticket_price ~., data = ham_lion_train)
-summary(avg_model)
-broom::tidy(top_model)
-
-# modeling the test samples
-top_model_pred <- predict(top_model, ham_lion__test)
-plot(top_model_pred)
-
-
-# residuals
-top_model_res <- residuals(top_model)
-top_model_res <- as.data.frame(top_model_res)
-plot(top_model_res)
-broom::augment(top_model)
-
-# top model results
-top_model_results <- cbind(top_model_pred, ham_lion_test$top_ticket_price)
-
-# viewing models side-by-side
-huxreg(top_model, avg_model)
-
-#plotting top_model}
+#plotting top_model
 hamilton_and_lion_king %>%
   ggplot(aes(x = avg_ticket_price, seats_sold, y = top_ticket_price, color = show)) +
   geom_point() +
@@ -123,4 +160,113 @@ hamilton_and_lion_king %>%
   labs(x = "Average Ticket Price (USD) + Seats Sold",
        y = "Top Ticket Price (USD)",
        color = "Show") +
-  theme_classic()'''
+  theme_classic()
+
+#Plotting Top Model Residuals
+
+#getting the residuals
+broom::augment(top_model)
+
+ggplot(top_model, 
+       aes(x = .resid)) + 
+  geom_histogram(binwidth = 1) +
+  theme_classic() +
+  labs(y = "Number of occurrences",
+       x = "Residuals")
+
+#Top Model Confidence Intervals
+
+##some exploration first
+glance(top_model)
+
+tidy(top_model)
+
+## using the confidence interval function
+confint(top_model)
+
+#plotting confidence interval
+set.seed(1407)
+
+top_model_intervals <- 
+  reg_intervals(top_ticket_price ~ avg_ticket_price + seats_sold + show, 
+                data = model_data,
+                keep_reps = TRUE,
+                model_fn = "lm")
+top_model_intervals
+
+top_model_intervals%>% 
+  select(term, .replicates) %>% 
+  unnest(cols = .replicates) %>% 
+  ggplot(aes(x = estimate)) + 
+  geom_histogram(bins = 30) + 
+  facet_wrap(~ term, scales = "free_x") + 
+  geom_vline(data = top_model_intervals, aes(xintercept = .lower), col = "red") + 
+  geom_vline(data = top_model_intervals, aes(xintercept = .upper), col = "red") + 
+  geom_vline(xintercept = 0, col = "green")
+
+#### Average Ticket Price Model ####
+
+#creating multiple regression for avg ticket price
+avg_model <- lm(formula = avg_ticket_price ~
+                  top_ticket_price +
+                  seats_sold + 
+                  show,  
+                data = hamilton_and_lion_king)
+summary(avg_model)
+
+#plotting avg_model
+hamilton_and_lion_king %>%
+  ggplot(aes(x = top_ticket_price, seats_sold, y = avg_ticket_price, color = show)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "dashed") +
+  labs(x = "Top Ticket Price (USD) + Seats Sold",
+       y = "Average Ticket Price (USD)",
+       color = "Show") +
+  theme_classic()
+
+#getting Avg Model residuals
+broom::augment(avg_model)
+
+#plotting Avg Model residuals
+ggplot(avg_model, 
+       aes(x = .resid)) + 
+  geom_histogram(binwidth = 1) +
+  theme_classic() +
+  labs(y = "Number of occurrences",
+       x = "Residuals")
+
+
+#avg model diagnostics
+broom::glance(avg_model)
+
+
+#avg model coefficient estimates
+broom::tidy(avg_model)
+
+#Avg Model Confidence Intervals
+confint(avg_model)
+
+#avg model confidence interval prep
+set.seed(1407)
+
+avg_model_intervals <- 
+  reg_intervals(avg_ticket_price ~ top_ticket_price + seats_sold + show, 
+                data = model_data,
+                keep_reps = TRUE,
+                model_fn = "lm")
+avg_model_intervals
+
+#plotting avg model confidence intervals
+avg_model_intervals%>% 
+  select(term, .replicates) %>% 
+  unnest(cols = .replicates) %>% 
+  ggplot(aes(x = estimate)) + 
+  geom_histogram(bins = 30) + 
+  facet_wrap(~ term, scales = "free_x") + 
+  geom_vline(data = avg_model_intervals, aes(xintercept = .lower), col = "red") + 
+  geom_vline(data = avg_model_intervals, aes(xintercept = .upper), col = "red") + 
+  geom_vline(xintercept = 0, col = "green")
+
+#displaying regression models side-by-side
+huxreg(top_model, avg_model)
+

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.4.26)  27 APR 2021 06:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.4.26)  27 APR 2021 20:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -861,39 +861,42 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 {c:/Users/Reem/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex
 .map}]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-27.
+29.
 (c:/Users/Reem/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [2]
-Overfull \hbox (734.96063pt too wide) in paragraph at lines 168--187
+Overfull \hbox (734.96063pt too wide) in paragraph at lines 172--191
  [][] 
  []
 
 
 Package longtable Warning: Column widths have changed
-(longtable)                in table 3 on input line 204.
+(longtable)                in table 3 on input line 208.
 
 <paper_files/figure-latex/grosses-1.pdf, id=45, 469.755pt x 325.215pt>
 File: paper_files/figure-latex/grosses-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/grosses-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/grosses-1.pdf  used on input 
-line 215.
+line 219.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+
+Overfull \vbox (60.79637pt too high) has occurred while \output is active []
+
 [3] [4 <./paper_files/figure-latex/grosses-1.pdf>]
 
 LaTeX Warning: Reference `fig:performances' on page 5 undefined on input line 2
-21.
+25.
 
 <paper_files/figure-latex/performances-1.pdf, id=70, 469.755pt x 325.215pt>
 File: paper_files/figure-latex/performances-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/performances-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/performances-1.pdf  used on i
-nput line 225.
+nput line 229.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [5 <./paper_files/figure-latex/performances-1.pdf>]
 
 LaTeX Warning: Reference `fig:aveticketsvsseatssold' on page 6 undefined on inp
-ut line 231.
+ut line 235.
 
 <paper_files/figure-latex/aveticketsvsseatssold-1.pdf, id=85, 469.755pt x 325.2
 15pt>
@@ -901,7 +904,7 @@ File: paper_files/figure-latex/aveticketsvsseatssold-1.pdf Graphic file (type p
 df)
 <use paper_files/figure-latex/aveticketsvsseatssold-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/aveticketsvsseatssold-1.pdf  
-used on input line 235.
+used on input line 239.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [6 <./paper_files/figure-latex/aveticketsvsseatssold-1.pdf>]
 <paper_files/figure-latex/aveticketsvspctcapacity-1.pdf, id=99, 469.755pt x 325
@@ -910,38 +913,38 @@ File: paper_files/figure-latex/aveticketsvspctcapacity-1.pdf Graphic file (type
  pdf)
 <use paper_files/figure-latex/aveticketsvspctcapacity-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/aveticketsvspctcapacity-1.pdf
-  used on input line 245.
+  used on input line 249.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
 LaTeX Warning: Reference `fig:aveticketsvspctcapacity' on page 7 undefined on i
-nput line 249.
+nput line 253.
 
 [7 <./paper_files/figure-latex/aveticketsvspctcapacity-1.pdf>]
 <paper_files/figure-latex/aveticketprice-1.pdf, id=114, 469.755pt x 325.215pt>
 File: paper_files/figure-latex/aveticketprice-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/aveticketprice-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/aveticketprice-1.pdf  used on
- input line 257.
+ input line 261.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
 LaTeX Warning: Reference `fig:aveticketprice' on page 8 undefined on input line
- 261.
+ 265.
 
 [8 <./paper_files/figure-latex/aveticketprice-1.pdf>]
 
 LaTeX Warning: Reference `fig:topticketprice' on page 9 undefined on input line
- 265.
+ 269.
 
 <paper_files/figure-latex/topticketprice-1.pdf, id=128, 469.755pt x 325.215pt>
 File: paper_files/figure-latex/topticketprice-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/topticketprice-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/topticketprice-1.pdf  used on
- input line 269.
+ input line 273.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [9 <./paper_files/figure-latex/topticketprice-1.pdf>]
 
 LaTeX Warning: Reference `fig:aveticketsvstopticketpricebyyears' on page 10 und
-efined on input line 275.
+efined on input line 279.
 
 <paper_files/figure-latex/aveticketsvstopticketpricebyyears-1.pdf, id=143, 469.
 755pt x 325.215pt>
@@ -949,7 +952,7 @@ File: paper_files/figure-latex/aveticketsvstopticketpricebyyears-1.pdf Graphic
 file (type pdf)
 <use paper_files/figure-latex/aveticketsvstopticketpricebyyears-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/aveticketsvstopticketpricebyy
-ears-1.pdf  used on input line 279.
+ears-1.pdf  used on input line 283.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [10 <./paper_files/figure-latex/aveticketsvstopticketpricebyyears-1.pdf>] [11]
 <paper_files/figure-latex/plotting top_model-1.pdf, id=175, 469.755pt x 325.215
@@ -958,53 +961,30 @@ File: paper_files/figure-latex/plotting top_model-1.pdf Graphic file (type pdf)
 
 <use paper_files/figure-latex/plotting top_model-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/plotting top_model-1.pdf  use
-d on input line 366.
+d on input line 427.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-
-Overfull \hbox (151.29793pt too wide) in paragraph at lines 366--367
- \T1/lmr/bx/n/10 4.4.1.1 Plot-ting Top Model[] [] 
- []
-
-[12 <./paper_files/figure-latex/plotting top_model-1.pdf>]
-<paper_files/figure-latex/plotting residuals-1.pdf, id=191, 469.755pt x 325.215
+[12]
+<paper_files/figure-latex/plotting residuals-1.pdf, id=183, 469.755pt x 325.215
 pt>
 File: paper_files/figure-latex/plotting residuals-1.pdf Graphic file (type pdf)
 
 <use paper_files/figure-latex/plotting residuals-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/plotting residuals-1.pdf  use
-d on input line 461.
+d on input line 432.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-
-Overfull \hbox (201.57849pt too wide) in paragraph at lines 461--462
- \T1/lmr/bx/n/10 4.4.1.3 Plot-ting Top Model Resid-u-als[] [] 
- []
-
-[13 <./paper_files/figure-latex/plotting residuals-1.pdf>]
-<paper_files/figure-latex/plotting avg_model-1.pdf, id=208, 469.755pt x 325.215
-pt>
-File: paper_files/figure-latex/plotting avg_model-1.pdf Graphic file (type pdf)
-
-<use paper_files/figure-latex/plotting avg_model-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/plotting avg_model-1.pdf  use
-d on input line 494.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-
-Overfull \hbox (171.90149pt too wide) in paragraph at lines 494--495
- \T1/lmr/bx/n/10 4.4.2.1 Plot-ting Av-er-age Model[] [] 
- []
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.566 \end{tabular}
-                    
+[13 <./paper_files/figure-latex/plotting top_model-1.pdf>]
+! Dimension too large.
+\CT@do@color ...o@color \relax \@tempdima \wd \z@ 
+                                                  \advance \@tempdima \@temp...
+l.473 ...756714417214)) \hspace{6pt}\huxbpad{6pt}}
+                                                   \tabularnewline[-0.5pt] 
 Here is how much of TeX's memory you used:
- 16581 strings out of 480954
- 287288 string characters out of 5905582
- 584913 words of memory out of 5000000
- 33406 multiletter control sequences out of 15000+600000
+ 16567 strings out of 480954
+ 286795 string characters out of 5905582
+ 685471 words of memory out of 5000000
+ 33401 multiletter control sequences out of 15000+600000
  491768 words of font info for 94 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 71i,13n,75p,963b,867s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 71i,13n,75p,38761b,863s stack positions out of 5000i,500n,10000p,200000b,80000s
 
 !  ==> Fatal error occurred, no output PDF file produced!
